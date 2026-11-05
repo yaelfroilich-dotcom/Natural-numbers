@@ -1,34 +1,1831 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מסדר האדריכלים - חלק א': מספרים טבעיים</title>
-<style>
-  :root {
-    --primary: #f59e0b;
-    --primary-dark: #d97706;
-    --bg: #fffbeb;
-    --card: #ffffff;
-    --correct: #10b981;
-    --wrong: #ef4444;
-    --text: #1e293b;
-  }
-  * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-  .game-container { max-width: 820px; width: 100%; background: var(--card); border-radius: 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.1); padding: 28px; border: 4px solid var(--primary); }
-  .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #fde68a; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-  .title-badge { background: var(--primary); color: white; padding: 8px 18px; border-radius: 99px; font-weight: bold; font-size: 1.2rem; }
-  .stats { display: flex; gap: 15px; font-weight: bold; font-size: 1.05rem; }
-  .stat-box { background: #fef3c7; padding: 6px 14px; border-radius: 12px; border: 2px solid #fde68a; }
-  .progress-bar { width: 100%; height: 14px; background: #f1f5f9; border-radius: 99px; overflow: hidden; margin-bottom: 22px; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #10b981); width: 0%; transition: width 0.4s ease; }
-  .topic-tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; }
-  .retry-tag { display: inline-block; background: #fee2e2; color: #991b1b; padding: 4px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; margin-right: 8px; }
-  .question-text { font-size: 1.4rem; font-weight: bold; margin-bottom: 18px; line-height: 1.4; }
-  .visual-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 16px; text-align: center; margin-bottom: 20px; }
-  .math-ltr { direction: ltr; unicode-bidi: embed; display: inline-block; font-family: 'Courier New', monospace; font-weight: bold; font-size: 1.45rem; background: #fff; padding: 6px 14px; border-radius: 10px; border: 2px solid #cbd5e1; }
-  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-  @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
-  .option-btn { background: #ffffff; border: 3px solid #cbd5e1; border-radius: 16px; padding: 16px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.2s; color: var(--text); text-align: center; }
-  .option-btn:hover:not(:disabled) { border-color
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מסדר האדריכלים: אתגר הצורות והשברים (כיתה ה')</title>
+    <!-- Google Fonts: Rubik for kid-friendly modern Hebrew -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Rubik', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pop': 'pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        },
+                        pop: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a 60%, #020617);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .game-btn {
+            transition: all 0.15s ease;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.35);
+        }
+        .game-btn:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.35);
+        }
+        .card-shine {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 60%);
+        }
+        .rhyme-box {
+            background: repeating-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.03),
+                rgba(255, 255, 255, 0.03) 10px,
+                rgba(255, 255, 255, 0.06) 10px,
+                rgba(255, 255, 255, 0.06) 20px
+            );
+        }
+        .math-ltr {
+            direction: ltr;
+            unicode-bidi: embed;
+            display: inline-block;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="selection:bg-amber-400 selection:text-slate-900 pb-12">
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <!-- TOP HUD / HEADER -->
+    <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-700/80 shadow-xl">
+        <div class="max-w-6xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            
+            <!-- Brand & Rank -->
+            <div class="flex items-center gap-3">
+                <button onclick="showDashboard()" class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-2xl shadow-lg border-2 border-amber-200 hover:scale-105 transition" title="חזרה למפה הראשית">
+                    🏛️
+                </button>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-l from-amber-300 via-yellow-200 to-white bg-clip-text text-transparent">
+                            מסדר האדריכלים
+                        </h1>
+                        <span id="rank-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-600 text-indigo-100 border border-indigo-400 shadow">
+                            דרגה: שוליה 🛠️
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 hidden sm:block">אתגר הצורות והשברים לכיתה ה' • לומדים בשיר, צורה וצבע</p>
+                </div>
+            </div>
+
+            <!-- Stats & Quick Actions -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <!-- Score / Coins -->
+                <div class="flex items-center gap-1.5 bg-slate-800/90 border border-amber-500/40 px-3 py-1.5 rounded-xl">
+                    <span class="text-lg">🪙</span>
+                    <div>
+                        <div class="text-[10px] text-slate-400 leading-none">נקודות בנייה</div>
+                        <div id="hud-score" class="text-sm sm:text-base font-black text-amber-400 leading-tight">0</div>
+                    </div>
+                </div>
+
+                <!-- Streak -->
+                <div class="flex items-center gap-1.5 bg-slate-800/90 border border-orange-500/40 px-3 py-1.5 rounded-xl" title="רצף תשובות נכונות מכפיל נקודות!">
+                    <span class="text-lg">🔥</span>
+                    <div>
+                        <div class="text-[10px] text-slate-400 leading-none">רצף</div>
+                        <div id="hud-streak" class="text-sm sm:text-base font-black text-orange-400 leading-tight">0</div>
+                    </div>
+                </div>
+
+                <!-- Golden Rules Album Button -->
+                <button onclick="openAlbumModal()" class="game-btn bg-gradient-to-b from-purple-500 to-indigo-700 hover:from-purple-400 hover:to-indigo-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 border border-purple-300/40">
+                    <span>📖</span>
+                    <span>ספר השירים והצורות</span>
+                    <span id="hud-cards-count" class="bg-purple-950/80 text-purple-200 px-1.5 py-0.2 rounded-full text-xs">0/8</span>
+                </button>
+
+                <!-- Teacher / Custom Question Button -->
+                <button onclick="openTeacherModal()" class="game-btn bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold p-2 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm flex items-center gap-1 border border-slate-600" title="הוספת שאלה חדשה למשחק">
+                    <span>➕</span>
+                    <span class="hidden md:inline">הוסף שאלה</span>
+                </button>
+
+                <!-- Audio Mute Toggle -->
+                <button id="sound-toggle-btn" onclick="toggleSound()" class="game-btn bg-slate-800 hover:bg-slate-700 text-slate-200 p-2 rounded-xl border border-slate-600 text-base" title="הפעל/השתק צלילים">
+                    🔊
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-6xl mx-auto px-3 sm:px-6 pt-5">
+
+        <!-- ==========================================
+             VIEW 1: MAIN DASHBOARD (CITADEL & WORLDS)
+             ========================================== -->
+        <section id="view-dashboard" class="space-y-6">
+            
+            <!-- Top Grid: Citadel Map & Progress -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+                
+                <!-- Architectural Citadel Visual Builder (7 cols) -->
+                <div class="lg:col-span-7 bg-slate-900/80 border-2 border-slate-700/80 rounded-3xl p-4 sm:p-5 relative overflow-hidden shadow-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-2 z-10">
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                                <span>🏰</span> קריית האדריכלים שלך
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-300">פתרו שאלות ב-4 העולמות כדי להקים ולהאיר את ארבעת מבני הפלא!</p>
+                        </div>
+                        <button onclick="resetProgressPrompt()" class="text-xs text-slate-400 hover:text-rose-400 underline">איפוס משחק</button>
+                    </div>
+
+                    <!-- Dynamic Interactive Citadel SVG -->
+                    <div id="citadel-svg-container" class="w-full h-52 sm:h-64 bg-gradient-to-b from-indigo-950 via-slate-900 to-emerald-950/60 rounded-2xl border border-slate-700/80 flex items-center justify-center p-2 relative overflow-hidden">
+                        <!-- Injected dynamically via JS -->
+                    </div>
+
+                    <!-- 4 Stones Status Bar -->
+                    <div class="grid grid-cols-4 gap-2 mt-3 z-10">
+                        <div class="bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-2 text-center">
+                            <div class="text-xs text-emerald-300 font-bold">🟩 גני הגאומטריה</div>
+                            <div id="prog-green" class="text-sm font-black text-white mt-0.5">0/3</div>
+                        </div>
+                        <div class="bg-sky-950/60 border border-sky-500/40 rounded-xl p-2 text-center">
+                            <div class="text-xs text-sky-300 font-bold">🟦 מגדל השברים</div>
+                            <div id="prog-blue" class="text-sm font-black text-white mt-0.5">0/3</div>
+                        </div>
+                        <div class="bg-amber-950/60 border border-amber-500/40 rounded-xl p-2 text-center">
+                            <div class="text-xs text-amber-300 font-bold">🟨 מקדש המספרים</div>
+                            <div id="prog-yellow" class="text-sm font-black text-white mt-0.5">0/3</div>
+                        </div>
+                        <div class="bg-rose-950/60 border border-rose-500/40 rounded-xl p-2 text-center">
+                            <div class="text-xs text-rose-300 font-bold">🟥 גשר האתגרים</div>
+                            <div id="prog-red" class="text-sm font-black text-white mt-0.5">0/3</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Welcome & Pedagogical Guide Card (5 cols) -->
+                <div class="lg:col-span-5 bg-gradient-to-br from-indigo-900/70 via-slate-900 to-purple-950/70 border-2 border-indigo-500/40 rounded-3xl p-5 flex flex-col justify-between shadow-2xl">
+                    <div class="space-y-3">
+                        <div class="inline-flex items-center gap-2 bg-amber-400/20 text-amber-300 border border-amber-400/40 px-3 py-1 rounded-full text-xs font-bold">
+                            <span>✨</span> איך משחקים ולומדים?
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-black text-white leading-snug">
+                            לומדים מתמטיקה וגאומטריה עם <span class="text-emerald-400">שיר</span>, <span class="text-sky-400">צורה</span> ו<span class="text-amber-400">צבע</span>!
+                        </h3>
+                        <ul class="space-y-2.5 text-xs sm:text-sm text-slate-200">
+                            <li class="flex items-start gap-2.5">
+                                <span class="bg-emerald-500/20 border border-emerald-400 text-emerald-300 rounded-lg px-2 py-0.5 font-bold">1</span>
+                                <span>בוחרים אחד מ-4 עולמות הצבע או לוחצים על <b>"אתגר מעורב"</b>.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="bg-sky-500/20 border border-sky-400 text-sky-300 rounded-lg px-2 py-0.5 font-bold">2</span>
+                                <span>נעזרים ב<b>שרטוט הצבעוני</b> ובקלפי הכוח (כמו <b>"רמז השיר"</b> שנותן חרוז מנחה!).</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="bg-amber-500/20 border border-amber-400 text-amber-300 rounded-lg px-2 py-0.5 font-bold">3</span>
+                                <span><b>טעיתם? לא נורא!</b> אחרי כל תשובה מופיע <b>שיר הכלל</b> והסבר פשוט בצבעים שמלמד את הסוד המתמטי.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Rank Progress Bar -->
+                    <div class="mt-4 bg-slate-950/70 p-3.5 rounded-2xl border border-slate-700/80">
+                        <div class="flex justify-between text-xs font-bold mb-1.5">
+                            <span id="next-rank-label" class="text-indigo-300">הדרך לדרגת: בנאי מוסמך 🧱</span>
+                            <span id="rank-points-progress" class="text-amber-400">0 / 150 נק'</span>
+                        </div>
+                        <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5">
+                            <div id="rank-progress-bar" class="h-full bg-gradient-to-l from-amber-400 to-indigo-500 rounded-full transition-all duration-500" style="width: 5%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Play Random Mix CTA -->
+                    <button onclick="startWorld('all')" class="mt-4 w-full game-btn bg-gradient-to-l from-amber-400 via-orange-500 to-rose-500 hover:from-amber-300 hover:to-rose-400 text-slate-950 font-black py-3.5 px-6 rounded-2xl text-base sm:text-lg flex items-center justify-center gap-2 shadow-xl">
+                        <span>🚀</span>
+                        <span>צא למסע אדריכלים מעורב (כל הנושאים!)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4 COLOR-CODED WORLDS SELECTION -->
+            <div>
+                <h2 class="text-lg sm:text-xl font-black text-white mb-3 flex items-center gap-2">
+                    <span>🗺️</span> בחרו עולם תוכן לאימון ובנייה:
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    
+                    <!-- GREEN WORLD: GEOMETRY -->
+                    <div onclick="startWorld('green')" class="cursor-pointer group bg-gradient-to-b from-emerald-800/80 to-emerald-950/95 hover:from-emerald-700/90 hover:to-emerald-900 border-2 border-emerald-400/60 rounded-3xl p-5 transition-all hover:-translate-y-1 shadow-lg flex flex-col justify-between relative overflow-hidden">
+                        <div class="card-shine absolute inset-0 pointer-events-none"></div>
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="w-12 h-12 rounded-2xl bg-emerald-500/30 border border-emerald-300/50 flex items-center justify-center text-2xl shadow-inner">📐</span>
+                                <span class="bg-emerald-950/90 text-emerald-300 border border-emerald-500/40 text-xs font-bold px-2.5 py-1 rounded-full">עולם ירוק 🟩</span>
+                            </div>
+                            <h3 class="text-xl font-black text-white mb-1">גאומטריה והיקפים</h3>
+                            <p class="text-xs text-emerald-100/80 leading-relaxed">
+                                הבדל בין שטח להיקף, מלבנים, שטח משולש, וסכום זוויות במשולש (180°).
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-emerald-600/40 flex items-center justify-between">
+                            <span id="world-stat-green" class="text-xs font-bold text-emerald-200">0/3 משימות הושלמו</span>
+                            <span class="bg-emerald-400 text-slate-950 font-black text-xs px-3 py-1.5 rounded-xl group-hover:scale-105 transition">כניסה ⬅</span>
+                        </div>
+                    </div>
+
+                    <!-- BLUE WORLD: FRACTIONS -->
+                    <div onclick="startWorld('blue')" class="cursor-pointer group bg-gradient-to-b from-sky-800/80 to-sky-950/95 hover:from-sky-700/90 hover:to-sky-900 border-2 border-sky-400/60 rounded-3xl p-5 transition-all hover:-translate-y-1 shadow-lg flex flex-col justify-between relative overflow-hidden">
+                        <div class="card-shine absolute inset-0 pointer-events-none"></div>
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="w-12 h-12 rounded-2xl bg-sky-500/30 border border-sky-300/50 flex items-center justify-center text-2xl shadow-inner">🍕</span>
+                                <span class="bg-sky-950/90 text-sky-300 border border-sky-500/40 text-xs font-bold px-2.5 py-1 rounded-full">עולם כחול 🟦</span>
+                            </div>
+                            <h3 class="text-xl font-black text-white mb-1">שברים פשוטים ועשרוניים</h3>
+                            <p class="text-xs text-sky-100/80 leading-relaxed">
+                                צמצום והרחבת שברים, מכנה משותף, שבר כחלק מכמות ומספרים עשרוניים.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-sky-600/40 flex items-center justify-between">
+                            <span id="world-stat-blue" class="text-xs font-bold text-sky-200">0/3 משימות הושלמו</span>
+                            <span class="bg-sky-400 text-slate-950 font-black text-xs px-3 py-1.5 rounded-xl group-hover:scale-105 transition">כניסה ⬅</span>
+                        </div>
+                    </div>
+
+                    <!-- YELLOW WORLD: NUMBERS & OPERATIONS -->
+                    <div onclick="startWorld('yellow')" class="cursor-pointer group bg-gradient-to-b from-amber-700/80 to-amber-950/95 hover:from-amber-600/90 hover:to-amber-900 border-2 border-amber-400/60 rounded-3xl p-5 transition-all hover:-translate-y-1 shadow-lg flex flex-col justify-between relative overflow-hidden">
+                        <div class="card-shine absolute inset-0 pointer-events-none"></div>
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="w-12 h-12 rounded-2xl bg-amber-500/30 border border-amber-300/50 flex items-center justify-center text-2xl shadow-inner">🔢</span>
+                                <span class="bg-amber-950/90 text-amber-300 border border-amber-500/40 text-xs font-bold px-2.5 py-1 rounded-full">עולם צהוב 🟨</span>
+                            </div>
+                            <h3 class="text-xl font-black text-white mb-1">סדר פעולות וחקר מספרים</h3>
+                            <p class="text-xs text-amber-100/80 leading-relaxed">
+                                מלך הסוגריים, כפל וחילוק קודמים, סימני התחלקות ב-3 וב-9 ומספרים ראשוניים.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-amber-600/40 flex items-center justify-between">
+                            <span id="world-stat-yellow" class="text-xs font-bold text-amber-200">0/3 משימות הושלמו</span>
+                            <span class="bg-amber-400 text-slate-950 font-black text-xs px-3 py-1.5 rounded-xl group-hover:scale-105 transition">כניסה ⬅</span>
+                        </div>
+                    </div>
+
+                    <!-- RED WORLD: ARCHITECT BRAIN TEASERS -->
+                    <div onclick="startWorld('red')" class="cursor-pointer group bg-gradient-to-b from-rose-800/80 to-rose-950/95 hover:from-rose-700/90 hover:to-rose-900 border-2 border-rose-400/60 rounded-3xl p-5 transition-all hover:-translate-y-1 shadow-lg flex flex-col justify-between relative overflow-hidden">
+                        <div class="card-shine absolute inset-0 pointer-events-none"></div>
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="w-12 h-12 rounded-2xl bg-rose-500/30 border border-rose-300/50 flex items-center justify-center text-2xl shadow-inner">🧠</span>
+                                <span class="bg-rose-950/90 text-rose-300 border border-rose-500/40 text-xs font-bold px-2.5 py-1 rounded-full">עולם אדום 🟥</span>
+                            </div>
+                            <h3 class="text-xl font-black text-white mb-1">אתגרי אדריכל וחשיבה</h3>
+                            <p class="text-xs text-rose-100/80 leading-relaxed">
+                                מציאת צלע חסרה מתוך היקף, בעיות מילוליות משולבות וחידות בנייה חכמות.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-rose-600/40 flex items-center justify-between">
+                            <span id="world-stat-red" class="text-xs font-bold text-rose-200">0/3 משימות הושלמו</span>
+                            <span class="bg-rose-400 text-slate-950 font-black text-xs px-3 py-1.5 rounded-xl group-hover:scale-105 transition">כניסה ⬅</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VIEW 2: ACTIVE QUESTION & VISUAL LEARNING
+             ========================================== -->
+        <section id="view-game" class="hidden space-y-5">
+            
+            <!-- Top Navigation & Question Meta Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900/90 border border-slate-700 px-4 py-3 rounded-2xl">
+                <div class="flex items-center gap-3">
+                    <button onclick="showDashboard()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-bold px-3 py-1.5 rounded-xl border border-slate-600 flex items-center gap-1.5">
+                        <span>➡</span> חזרה למפה
+                    </button>
+                    <span id="q-world-pill" class="text-xs sm:text-sm font-black px-3 py-1 rounded-full">
+                        🟩 גאומטריה והיקפים
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span id="q-stars" class="text-sm font-bold text-amber-400 bg-slate-800 px-3 py-1 rounded-xl border border-slate-700">
+                        ⭐⭐ 20 נק'
+                    </span>
+                    <span id="q-counter" class="text-xs sm:text-sm font-bold text-slate-300">
+                        שאלה 1 מתוך 3
+                    </span>
+                </div>
+            </div>
+
+            <!-- Question & Visual Area Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                
+                <!-- RIGHT COLUMN: Dynamic SVG Visual & Power-Ups (5 cols) -->
+                <div class="lg:col-span-5 bg-slate-900/90 border-2 border-slate-700 rounded-3xl p-4 sm:p-5 flex flex-col items-center justify-between shadow-xl">
+                    <div class="w-full flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-400 flex items-center gap-1">
+                            <span>🎨</span> המחשה בצורה וצבע:
+                        </span>
+                        <span id="q-topic-tag" class="text-xs font-bold text-indigo-300 bg-indigo-950/80 px-2.5 py-0.5 rounded-md border border-indigo-700">
+                            שטח והיקף מלבן
+                        </span>
+                    </div>
+
+                    <!-- Dynamic SVG Canvas Box -->
+                    <div id="question-svg-box" class="w-full h-56 sm:h-64 bg-slate-950/90 rounded-2xl border border-slate-800 flex items-center justify-center p-3 overflow-hidden shadow-inner">
+                        <!-- Dynamic SVG injected here -->
+                    </div>
+
+                    <!-- Power-ups Row (קלפי כוח) -->
+                    <div class="w-full mt-4 pt-3 border-t border-slate-800">
+                        <div class="text-xs font-bold text-slate-400 mb-2 flex items-center justify-between">
+                            <span>⚡ קלפי כוח לעזרה:</span>
+                            <span class="text-[11px] text-amber-300">השתמשו בחוכמה!</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button id="btn-hint-rhyme" onclick="useRhymeHint()" class="game-btn bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 disabled:opacity-40 text-slate-950 font-black py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-1.5">
+                                <span>🎵</span>
+                                <span>רמז השיר</span>
+                            </button>
+                            <button id="btn-hint-5050" onclick="use5050Hint()" class="game-btn bg-gradient-to-b from-indigo-500 to-indigo-700 hover:from-indigo-400 hover:to-indigo-600 disabled:opacity-40 text-white font-bold py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-1.5">
+                                <span>✂️</span>
+                                <span>גלגל 50/50</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pre-Answer Rhyme Hint Box (Hidden until clicked) -->
+                    <div id="pre-hint-box" class="hidden w-full mt-3 bg-amber-950/60 border-2 border-amber-400/70 rounded-2xl p-3 text-center animate-pop">
+                        <div class="text-xs font-bold text-amber-300 mb-1">🎵 שיר הרמז של האדריכלים:</div>
+                        <p id="pre-hint-text" class="text-sm font-bold text-white whitespace-pre-line leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- LEFT COLUMN: Question Text, Options & Educational Feedback (7 cols) -->
+                <div class="lg:col-span-7 space-y-4">
+                    
+                    <!-- Question Card -->
+                    <div id="question-card-border" class="bg-slate-900/95 border-2 border-emerald-500/60 rounded-3xl p-5 sm:p-6 shadow-2xl">
+                        <h2 id="q-title" class="text-lg sm:text-2xl font-black text-white leading-relaxed mb-5">
+                            טוען שאלה...
+                        </h2>
+
+                        <!-- 4 Answer Buttons Grid -->
+                        <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <!-- Buttons injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- =========================================================
+                         EDUCATIONAL FEEDBACK BOX ("שיר, צורה וצבע")
+                         Appears immediately upon answering (Correct or Wrong)
+                         ========================================================= -->
+                    <div id="feedback-panel" class="hidden rounded-3xl p-5 sm:p-6 border-2 shadow-2xl animate-pop space-y-4">
+                        
+                        <!-- Feedback Header -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-3">
+                            <div class="flex items-center gap-2.5">
+                                <span id="fb-icon" class="text-3xl">🎉</span>
+                                <div>
+                                    <h3 id="fb-title" class="text-lg sm:text-xl font-black text-white">כל הכבוד! תשובה מדויקת!</h3>
+                                    <p id="fb-subtitle" class="text-xs sm:text-sm text-slate-200">קיבלת +20 נקודות בנייה וקלף כלל הזהב נשמר בספר!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Grid: Catchy Rhyme + Simple Color & Shape Breakdown -->
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+                            
+                            <!-- The Catchy Rhyme (שיר הכלל) -->
+                            <div class="md:col-span-5 rhyme-box bg-slate-950/80 border-2 border-amber-400/60 rounded-2xl p-4 flex flex-col justify-center relative">
+                                <div class="inline-flex items-center gap-1.5 text-xs font-black text-amber-300 mb-2">
+                                    <span>🎶</span> שיר הכלל (לזכור תמיד!):
+                                </div>
+                                <p id="fb-rhyme" class="text-sm sm:text-base font-bold text-amber-100 whitespace-pre-line leading-relaxed italic">
+                                </p>
+                            </div>
+
+                            <!-- Simple Step-by-Step Visual Breakdown (הסבר בצורה וצבע) -->
+                            <div class="md:col-span-7 bg-slate-950/75 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between space-y-2">
+                                <div>
+                                    <div class="inline-flex items-center gap-1.5 text-xs font-black text-sky-300 mb-1.5">
+                                        <span>💡</span> הסבר פשוט בצורה וצבע:
+                                    </div>
+                                    <p id="fb-explanation" class="text-xs sm:text-sm text-slate-100 leading-relaxed"></p>
+                                </div>
+                                <div class="bg-slate-900 border border-slate-700/80 rounded-xl p-2.5 text-xs sm:text-sm font-bold text-emerald-300 flex items-center justify-between">
+                                    <span>החישוב צעד-אחר-צעד:</span>
+                                    <span id="fb-math-step" class="math-ltr text-amber-300 text-sm sm:text-base"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons (Try Again if wrong, or Next Question) -->
+                        <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
+                            <button id="btn-try-again" onclick="retryCurrentQuestion()" class="hidden game-btn bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2.5 rounded-xl text-sm flex items-center gap-1.5">
+                                <span>🔄</span> הבנתי את השיר! תנו לי לנסות שוב
+                            </button>
+                            <button id="btn-next-question" onclick="nextQuestion()" class="game-btn bg-gradient-to-l from-emerald-400 to-teal-500 hover:from-emerald-300 hover:to-teal-400 text-slate-950 font-black px-6 py-2.5 rounded-xl text-sm sm:text-base flex items-center gap-2">
+                                <span>המשך למשימה הבאה</span>
+                                <span>⬅</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =====================================================
+         MODAL 1: BOOK OF RHYMES & SHAPES (ספר השירים והצורות)
+         ===================================================== -->
+    <div id="modal-album" class="fixed inset-0 z-40 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-slate-900 border-2 border-purple-500/60 rounded-3xl max-w-5xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-pop">
+            
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-l from-purple-900/80 to-indigo-900/80 px-5 py-4 border-b border-purple-500/40 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl">📖</span>
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-black text-white">ספר השירים והצורות של מסדר האדריכלים</h2>
+                        <p class="text-xs text-purple-200">כל קלפי "כלל הזהב" לחזרה מושלמת ומהירה לפני מבחן!</p>
+                    </div>
+                </div>
+                <button onclick="closeAlbumModal()" class="bg-slate-800 hover:bg-rose-600 text-white w-9 h-9 rounded-xl font-black text-lg transition">✕</button>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="px-5 py-3 bg-slate-950/60 border-b border-slate-800 flex flex-wrap gap-2">
+                <button onclick="renderAlbumCards('all')" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-purple-600 text-white">הכל (8 כללים)</button>
+                <button onclick="renderAlbumCards('green')" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-900/70 text-emerald-200 border border-emerald-500/40">🟩 גאומטריה</button>
+                <button onclick="renderAlbumCards('blue')" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-sky-900/70 text-sky-200 border border-sky-500/40">🟦 שברים</button>
+                <button onclick="renderAlbumCards('yellow')" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-amber-900/70 text-amber-200 border border-amber-500/40">🟨 מספרים ופעולות</button>
+                <button onclick="renderAlbumCards('red')" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-rose-900/70 text-rose-200 border border-rose-500/40">🟥 אתגרי חשיבה</button>
+            </div>
+
+            <!-- Cards Grid -->
+            <div id="album-cards-grid" class="p-5 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         MODAL 2: TEACHER / PARENT ADD CUSTOM QUESTION
+         ===================================================== -->
+    <div id="modal-teacher" class="fixed inset-0 z-40 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-slate-900 border-2 border-amber-500/60 rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-pop">
+            <div class="bg-slate-800 px-5 py-4 border-b border-slate-700 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">👩‍🏫</span>
+                    <div>
+                        <h2 class="text-lg font-black text-white">הוספת שאלה חדשה למשחק (למורה / הורה / תלמיד)</h2>
+                        <p class="text-xs text-slate-300">הכניסו שאלה מהחומר שלכם יחד עם שיר קצר והסבר פשוט</p>
+                    </div>
+                </div>
+                <button onclick="closeTeacherModal()" class="bg-slate-700 hover:bg-rose-600 text-white w-9 h-9 rounded-xl font-black">✕</button>
+            </div>
+
+            <form id="custom-question-form" onsubmit="saveCustomQuestion(event)" class="p-5 overflow-y-auto space-y-4 text-xs sm:text-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">עולם תוכן וצבע:</label>
+                        <select id="cq-world" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-bold">
+                            <option value="green">🟩 ירוק - גאומטריה והיקפים</option>
+                            <option value="blue">🟦 כחול - שברים פשוטים ועשרוניים</option>
+                            <option value="yellow">🟨 צהוב - סדר פעולות וחקר מספרים</option>
+                            <option value="red">🟥 אדום - אתגרי חשיבה ובעיות מילוליות</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">כותרת נושא קצרה:</label>
+                        <input id="cq-topic" type="text" required placeholder="למשל: היקף מעוין / חיבור שברים" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">השאלה:</label>
+                    <input id="cq-question" type="text" required placeholder="כתבו כאן את השאלה המלאה..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-emerald-400 mb-1">✅ התשובה הנכונה:</label>
+                        <input id="cq-ans-correct" type="text" required placeholder="למשל: 24 ס״מ" class="w-full bg-emerald-950/40 border border-emerald-500/60 rounded-xl p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-rose-300 mb-1">❌ תשובה מסיחה 1:</label>
+                        <input id="cq-ans-w1" type="text" required placeholder="למשל: 36 ס״מ" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-rose-300 mb-1">❌ תשובה מסיחה 2:</label>
+                        <input id="cq-ans-w2" type="text" required placeholder="למשל: 12 ס״מ" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-rose-300 mb-1">❌ תשובה מסיחה 3:</label>
+                        <input id="cq-ans-w3" type="text" required placeholder="למשל: 48 ס״מ" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-amber-300 mb-1">🎵 שיר הכלל (חרוז קליט שמסביר את החוק):</label>
+                    <textarea id="cq-rhyme" rows="2" required placeholder="היקף הוא גדר סביב הצורה, מחברים את כל הצלעות בשורה!" class="w-full bg-slate-950 border border-amber-500/50 rounded-xl p-2.5 text-white"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-sky-300 mb-1">💡 הסבר פשוט לילדים:</label>
+                        <input id="cq-explanation" type="text" required placeholder="איך פותרים בצורה הכי פשוטה?" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">תרגיל החישוב (אופציונלי):</label>
+                        <input id="cq-math" type="text" placeholder="6 + 6 + 6 + 6 = 24" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white math-ltr">
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="closeTeacherModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold">ביטול</button>
+                    <button type="submit" class="game-btn px-6 py-2 rounded-xl bg-amber-400 text-slate-950 font-black">שמור והוסף למשחק! ✨</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Toast / Message Notification -->
+    <div id="toast-msg" class="fixed bottom-5 left-5 z-50 hidden bg-slate-900 border-2 border-amber-400 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 animate-pop">
+        <span id="toast-icon" class="text-xl">✨</span>
+        <span id="toast-text" class="text-sm font-bold"></span>
+    </div>
+
+    <!-- =====================================================
+         JAVASCRIPT ENGINE: SOUND, VISUALS, QUESTIONS & LOGIC
+         ===================================================== -->
+    <script>
+        /* ----------------------------------------------------
+           1. WEB AUDIO SYNTHESIZER (No external MP3 needed)
+           ---------------------------------------------------- */
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+                        gain.gain.setValueAtTime(0.18, now + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.35);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + i * 0.08);
+                        osc.stop(now + i * 0.08 + 0.36);
+                    });
+                } else if (type === 'wrong') {
+                    const notes = [300, 250];
+                    notes.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.14);
+                        gain.gain.setValueAtTime(0.15, now + i * 0.14);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.14 + 0.25);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + i * 0.14);
+                        osc.stop(now + i * 0.14 + 0.26);
+                    });
+                } else if (type === 'hint') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.18);
+                    gain.gain.setValueAtTime(0.14, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.23);
+                }
+            } catch (e) {
+                // Ignore audio errors on restricted devices
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-toggle-btn').textContent = soundEnabled ? '🔊' : '🔇';
+            showToast(soundEnabled ? 'הצלילים הופעלו 🔊' : 'הצלילים הושתקו 🔇', '🎵');
+        }
+
+        /* ----------------------------------------------------
+           2. GOLDEN RULE CARDS (ספר השירים והצורות)
+           ---------------------------------------------------- */
+        const GOLDEN_RULES = [
+            {
+                id: 'rule_rect',
+                world: 'green',
+                title: 'שטח והיקף של מלבן',
+                rhyme: 'ההיקף הוא רק גָדֵר,\nסביב-סביב הוא מסתדר – מחברים את הצלעות!\nאך השטח הוא הדשא בפנים,\nאורך כפול רוחב תמיד מכפילים!',
+                tip: 'היקף = סכום 4 הצלעות מסביב. שטח = כמה משבצות נכנסות בפנים (אורך × רוחב).',
+                svgType: 'rect_area_perim',
+                svgParams: { w: 8, h: 5 }
+            },
+            {
+                id: 'rule_angles',
+                world: 'green',
+                title: 'סכום זוויות במשולש (180°)',
+                rhyme: 'משולש קטן או רחב במיוחד,\nשלוש זוויות יתחברו לאחד:\nמאה שמונים מעלות בדיוק בשורה,\nקו ישר לגמרי – זו כל התורה!',
+                tip: 'בכל משולש בעולם, אם נחבר את 3 הזוויות יחד תמיד נקבל 180 מעלות.',
+                svgType: 'triangle_angles',
+                svgParams: { a1: 60, a2: 70, a3: '50°' }
+            },
+            {
+                id: 'rule_tri_area',
+                world: 'green',
+                title: 'שטח משולש ישר-זווית',
+                rhyme: 'משולש ישר זווית הוא חצי מלבן,\nנכפיל ניצב בניצב – והנה הוא מוכן!\nרק אל תשכחו בסוף הפעולה,\nלחלק בשתיים לקבלת התשובה!',
+                tip: 'משולש הוא בדיוק חצי ממלבן חוסם, לכן כופלים אורך ברוחב ומחלקים ב-2.',
+                svgType: 'right_triangle_area',
+                svgParams: { b: 6, h: 4 }
+            },
+            {
+                id: 'rule_frac_expand',
+                world: 'blue',
+                title: 'הרחבה וצמצום שברים',
+                rhyme: 'למעלה מונה, למטה מכנה,\nאם נכפול את שניהם – הגודל לא ישתנה!\nהפיצה אותה פיצה, תמיד מדויקת,\nרק חתכנו לחתיכות קטנות יותר בשקט.',
+                tip: 'כשכופלים או מחלקים גם את המונה וגם את המכנה באותו מספר, ערך השבר נשאר זהה.',
+                svgType: 'fraction_pizzas',
+                svgParams: { n1: 1, d1: 2, n2: 3, d2: 6 }
+            },
+            {
+                id: 'rule_frac_add',
+                world: 'blue',
+                title: 'חיבור שברים (מכנה משותף)',
+                rhyme: 'שברים זרים לא נפגשים,\nעד שמכנה משותף מחפשים!\nקודם משווים את הקומות התחתונות,\nורק אז מחברים את המונות!',
+                tip: 'אי אפשר לחבר חצאים ורבעים לפני שהופכים את החצי ל-2 רבעים (אותו מכנה).',
+                svgType: 'fraction_bars_add',
+                svgParams: {}
+            },
+            {
+                id: 'rule_order_ops',
+                world: 'yellow',
+                title: 'סדר פעולות חשבון',
+                rhyme: 'הסוגריים הם המלך – פותרים אותם ראשון!\nאחר כך כפל וחילוק נכנסים לסלון,\nורק בסוף-בסוף, בלי שום בהלה,\nחיבור וחיסור משלימים את הפעולה!',
+                tip: 'סדר קבוע: 1. סוגריים ()  2. כפל וחילוק (משמאל לימין)  3. חיבור וחיסור.',
+                svgType: 'order_podium',
+                svgParams: {}
+            },
+            {
+                id: 'rule_div_3',
+                world: 'yellow',
+                title: 'סימן התחלקות ב-3 וב-9',
+                rhyme: 'איך יודעים אם מספר מתחלק בשלוש?\nמחברים את הספרות שלו בלי לחשוש!\nאם סכום הספרות בשלוש מתחלק,\nהמספר כולו לחלקים שווים יתחלק!',
+                tip: 'לדוגמה ב-135: מחברים 1+3+5 = 9. מכיוון ש-9 מתחלק ב-3, גם 135 מתחלק ב-3!',
+                svgType: 'digits_sum',
+                svgParams: { digits: [1, 3, 5], sum: 9 }
+            },
+            {
+                id: 'rule_missing_side',
+                world: 'red',
+                title: 'מציאת צלע חסרה מתוך ההיקף',
+                rhyme: 'אם ההיקף כבר ידוע וצלע אחת נעלמה,\nנחלק את ההיקף לשתיים כצעד ראשון במשימה!\nנקבל סכום של אורך ורוחב יחדיו,\nנחסר את הצלע הידועה – והפתרון זהב!',
+                tip: 'במלבן יש 2 אורכים ו-2 רוחבים. לכן (היקף חלקי 2) שווה ל-(אורך + רוחב).',
+                svgType: 'missing_side_rect',
+                svgParams: { perim: 24, known: 8, unknown: '?' }
+            }
+        ];
+
+        /* ----------------------------------------------------
+           3. CURRICULUM QUESTIONS DATABASE (12 Detailed Items)
+           ---------------------------------------------------- */
+        let QUESTIONS = [
+            // GREEN WORLD (Geometry)
+            {
+                id: 'q_g1',
+                world: 'green',
+                topic: 'שטח והיקף מלבן',
+                ruleId: 'rule_rect',
+                points: 20,
+                question: 'אדריכל מתכנן גינה מלבנית שאורכה 8 מטרים ורוחבה 5 מטרים. כמה מטרים של גדר (היקף) צריך מסביב, ומהו שטח הדשא בפנים?',
+                options: [
+                    'היקף: 26 מ׳ | שטח: 40 מ״ר',
+                    'היקף: 40 מ׳ | שטח: 26 מ״ר',
+                    'היקף: 13 מ׳ | שטח: 40 מ״ר',
+                    'היקף: 26 מ׳ | שטח: 13 מ״ר'
+                ],
+                correctIndex: 0,
+                rhyme: 'ההיקף הוא רק גָדֵר, סביב-סביב הוא מסתדר (מחברים צלעות)!\nאך השטח הוא הדשא בפנים – אורך כפול רוחב תמיד מכפילים!',
+                explanation: 'הביטו בציור: הגדר החומה מקיפה 4 צלעות (8 ועוד 5 ועוד 8 ועוד 5 = 26 מ׳). הדשא הירוק בפנים מורכב מ-5 שורות של 8 משבצות (8 כפול 5 = 40 מ״ר).',
+                mathStep: 'P = 8+5+8+5 = 26 | S = 8 × 5 = 40',
+                svgType: 'rect_area_perim',
+                svgParams: { w: 8, h: 5 }
+            },
+            {
+                id: 'q_g2',
+                world: 'green',
+                topic: 'סכום זוויות במשולש',
+                ruleId: 'rule_angles',
+                points: 20,
+                question: 'בגג המשולש של המגדל מדדנו שתי זוויות: אחת בת 65° והשנייה בת 45°. מהו גודלה של הזווית השלישית (המסומנת ב-?) בראש הגג?',
+                options: [
+                    '70°',
+                    '80°',
+                    '90°',
+                    '110°'
+                ],
+                correctIndex: 0,
+                rhyme: 'משולש קטן או רחב במיוחד,\nשלוש זוויות יתחברו לאחד:\nמאה שמונים מעלות בדיוק בשורה,\nקו ישר לגמרי – זו כל התורה!',
+                explanation: 'כל שלוש הזוויות במשולש (הצהובה, הכחולה והוורודה) משלימות יחד ל-180°. נחבר את שתי הזוויות הידועות (65+45=110) ונחסר מ-180.',
+                mathStep: '180° - (65° + 45°) = 180° - 110° = 70°',
+                svgType: 'triangle_angles',
+                svgParams: { a1: '65°', a2: '45°', a3: '?' }
+            },
+            {
+                id: 'q_g3',
+                world: 'green',
+                topic: 'שטח משולש ישר-זווית',
+                ruleId: 'rule_tri_area',
+                points: 25,
+                question: 'בונים מפרש בצורת משולש ישר-זווית. אורכי הניצבים (הצלעות שיוצרות את הזווית הישרה) הם 6 מ׳ ו-4 מ׳. מהו שטח המפרש?',
+                options: [
+                    '12 מ״ר',
+                    '24 מ״ר',
+                    '10 מ״ר',
+                    '20 מ״ר'
+                ],
+                correctIndex: 0,
+                rhyme: 'משולש ישר זווית הוא חצי מלבן,\nנכפיל ניצב בניצב – והנה הוא מוכן!\nרק אל תשכחו בסוף הפעולה,\nלחלק בשתיים לקבלת התשובה!',
+                explanation: 'ראו בקו המקווקו בציור: המשולש הירוק ממלא בדיוק חצי מהמלבן! שטח המלבן כולו הוא 6×4=24, ולכן שטח המשולש הוא חצי ממנו: 12 מ״ר.',
+                mathStep: '(6 × 4) ÷ 2 = 24 ÷ 2 = 12',
+                svgType: 'right_triangle_area',
+                svgParams: { b: 6, h: 4 }
+            },
+
+            // BLUE WORLD (Fractions & Decimals)
+            {
+                id: 'q_b1',
+                world: 'blue',
+                topic: 'הרחבת שברים ושוויון',
+                ruleId: 'rule_frac_expand',
+                points: 20,
+                question: 'חילקנו חלון עגול ל-4 חלקים שווים וצבענו 3 מהם בכחול (3/4). אם נחלק את אותו חלון ל-12 חלקים קטנים שווים, כמה חלקים נצטרך לצבוע כדי לקבל בדיוק אותו שטח?',
+                options: [
+                    '9 חלקים (9/12)',
+                    '6 חלקים (6/12)',
+                    '8 חלקים (8/12)',
+                    '11 חלקים (11/12)'
+                ],
+                correctIndex: 0,
+                rhyme: 'למעלה מונה, למטה מכנה,\nאם נכפול את שניהם – הגודל לא ישתנה!\nהפיצה אותה פיצה, תמיד מדויקת,\nרק חתכנו לחתיכות קטנות יותר בשקט.',
+                explanation: 'המכנה גדל מ-4 ל-12 (כלומר הכפלנו פי 3). כדי שהצורה הצבועה תישאר באותו גודל בדיוק, נכפול גם את המונה (3) פי 3 ונקבל 9!',
+                mathStep: '(3 × 3) / (4 × 3) = 9/12',
+                svgType: 'fraction_pizzas',
+                svgParams: { n1: 3, d1: 4, n2: 9, d2: 12 }
+            },
+            {
+                id: 'q_b2',
+                world: 'blue',
+                topic: 'חיבור שברים (מכנה משותף)',
+                ruleId: 'rule_frac_add',
+                points: 20,
+                question: 'בבוקר צבעו הבנאים 1/2 (חצי) מהחומה, ובצהריים צבעו עוד 1/4 (רבע) מהחומה. איזה חלק מהחומה צבוע כעת בסך הכל?',
+                options: [
+                    '3/4 מהחומה',
+                    '2/6 מהחומה',
+                    '2/4 מהחומה',
+                    '4/4 (כל החומה)'
+                ],
+                correctIndex: 0,
+                rhyme: 'שברים זרים לא נפגשים,\nעד שמכנה משותף מחפשים!\nקודם משווים את הקומות התחתונות,\nורק אז מחברים את המונות!',
+                explanation: 'בציור רואים שחצי חומה (כחול) שווה בדיוק ל-2 רבעים (2/4). כשמוסיפים עוד רבע אחד (תכלת), מקבלים יחד 3 רבעים!',
+                mathStep: '1/2 + 1/4 = 2/4 + 1/4 = 3/4',
+                svgType: 'fraction_bars_add',
+                svgParams: {}
+            },
+            {
+                id: 'q_b3',
+                world: 'blue',
+                topic: 'שבר עשרוני מול שבר פשוט',
+                ruleId: 'rule_frac_expand',
+                points: 25,
+                question: 'בארון הכלים יש קורת עץ באורך 0.4 מטר. איזה שבר פשוט מתאר בדיוק את אותו האורך (לאחר צמצום)?',
+                options: [
+                    '2/5 מטר',
+                    '1/4 מטר',
+                    '4/5 מטר',
+                    '1/2 מטר'
+                ],
+                correctIndex: 0,
+                rhyme: 'ספרה אחת אחרי הנקודה היא עשיריות,\nארבע עשיריות הן שתי חמישיות!\nנצמצם מונה ומכנה בחלוקה לשתיים,\nונקבל שבר פשוט ונעים לעיניים!',
+                explanation: '0.4 הם 4 עשיריות (4/10). בציור רואים שכל זוג עשיריות מתחבר לחמישית אחת, ולכן 4 עשיריות הן בדיוק 2 חמישיות (2/5).',
+                mathStep: '0.4 = 4/10 = (4÷2) / (10÷2) = 2/5',
+                svgType: 'decimal_bar',
+                svgParams: { tenths: 4 }
+            },
+
+            // YELLOW WORLD (Order of Operations & Number Properties)
+            {
+                id: 'q_y1',
+                world: 'yellow',
+                topic: 'סדר פעולות חשבון',
+                ruleId: 'rule_order_ops',
+                points: 20,
+                question: 'כדי לפתוח את שער המקדש, חשבו לפי חוקי סדר פעולות חשבון:  20 - 3 × (2 + 3) = ?',
+                options: [
+                    '5',
+                    '85',
+                    '11',
+                    '25'
+                ],
+                correctIndex: 0,
+                rhyme: 'הסוגריים הם המלך – פותרים אותם ראשון!\nאחר כך כפל וחילוק נכנסים לסלון,\nורק בסוף-בסוף, בלי שום בהלה,\nחיבור וחיסור משלימים את הפעולה!',
+                explanation: 'שלב 1 (כתר זהב): פותרים סוגריים (2+3=5). שלב 2 (כחול): כפל קודם לחיסור! לכן כופלים 3×5=15. שלב 3: 20 פחות 15 שווה 5.',
+                mathStep: '20 - 3 × (5) = 20 - 15 = 5',
+                svgType: 'order_podium',
+                svgParams: { expr: '20 - 3 × (2 + 3)' }
+            },
+            {
+                id: 'q_y2',
+                world: 'yellow',
+                topic: 'סימן התחלקות ב-3',
+                ruleId: 'rule_div_3',
+                points: 20,
+                question: 'אנחנו רוצים לחלק לבני זהב ל-3 מגדלים שווים בלי שתישאר שארית. איזה ממספרי הלבנים הבאים מתחלק ב-3 ללא שארית?',
+                options: [
+                    '135 לבנים',
+                    '124 לבנים',
+                    '205 לבנים',
+                    '311 לבנים'
+                ],
+                correctIndex: 0,
+                rhyme: 'איך יודעים אם מספר מתחלק בשלוש?\nמחברים את הספרות שלו בלי לחשוש!\nאם סכום הספרות בשלוש מתחלק,\nהמספר כולו לחלקים שווים יתחלק!',
+                explanation: 'נבדוק את סכום הספרות של 135: 1 + 3 + 5 = 9. מכיוון ש-9 מתחלק ב-3 (9÷3=3), גם המספר 135 כולו מתחלק ב-3!',
+                mathStep: '1 + 3 + 5 = 9  ➔  9 ÷ 3 = 3 ✔️',
+                svgType: 'digits_sum',
+                svgParams: { digits: [1, 3, 5], sum: 9 }
+            },
+            {
+                id: 'q_y3',
+                world: 'yellow',
+                topic: 'מספרים ראשוניים ופריקים',
+                ruleId: 'rule_div_3',
+                points: 25,
+                question: 'אבן יסוד "ראשונית" היא מספר שמתחלק רק ב-1 ובעצמו (אי אפשר לסדר אותו כמלבן של שורות וטורים). איזה מהמספרים הבאים הוא מספר ראשוני?',
+                options: [
+                    '17',
+                    '15',
+                    '21',
+                    '18'
+                ],
+                correctIndex: 0,
+                rhyme: 'מספר פריק מסתדר בשורות כמלבן,\nאך מספר ראשוני הוא מיוחד וקטן:\nמתחלק רק באחד ובעצמו בלבד,\nעומד בשורה יחידה בדד!',
+                explanation: '15 הוא 3×5, 21 הוא 3×7, ו-18 הוא 3×6. רק את 17 אי אפשר לפרק לשום מכפלה של שני מספרים שלמים (רק 1×17).',
+                mathStep: '17 = 1 × 17 (ראשוני!)',
+                svgType: 'prime_blocks',
+                svgParams: {}
+            },
+
+            // RED WORLD (Architect Challenges & Word Problems)
+            {
+                id: 'q_r1',
+                world: 'red',
+                topic: 'מציאת צלע חסרה מתוך ההיקף',
+                ruleId: 'rule_missing_side',
+                points: 30,
+                question: 'היקף חצר המצודה המלבנית הוא 24 מטרים. ידוע שהאורך של החצר הוא 8 מטרים. מהו הרוחב החסר (?) של החצר?',
+                options: [
+                    '4 מטרים',
+                    '3 מטרים',
+                    '8 מטרים',
+                    '16 מטרים'
+                ],
+                correctIndex: 0,
+                rhyme: 'אם ההיקף כבר ידוע וצלע אחת נעלמה,\nנחלק את ההיקף לשתיים כצעד ראשון במשימה!\nנקבל סכום של אורך ורוחב יחדיו,\nנחסר את הצלע הידועה – והפתרון זהב!',
+                explanation: 'שתי צלעות האורך יחד הן 8+8=16 מ׳. נחסר 16 מכל ההיקף (24-16=8 מ׳). ה-8 מ׳ שנשארו מתחלקים שווה בשווה בין 2 צלעות הרוחב: 8÷2 = 4 מ׳!',
+                mathStep: '(24 ÷ 2) - 8 = 12 - 8 = 4',
+                svgType: 'missing_side_rect',
+                svgParams: { perim: 24, known: 8, unknown: '?' }
+            },
+            {
+                id: 'q_r2',
+                world: 'red',
+                topic: 'חלק מכמות בשלבים',
+                ruleId: 'rule_frac_expand',
+                points: 30,
+                question: 'במחסן האדריכלים יש 20 קורות עץ. 2/5 (שתי חמישיות) מהן משמשות לבניית הגג, והשאר לבניית הגשר. כמה קורות עץ נשארו לבניית הגשר?',
+                options: [
+                    '12 קורות',
+                    '8 קורות',
+                    '10 קורות',
+                    '15 קורות'
+                ],
+                correctIndex: 0,
+                rhyme: 'כדי למצוא שבר מתוך כמות שלמה,\nנחלק במכנה – זו התחלה חכמה!\nנכפיל במונה כדי לדעת כמה לקחו,\nונחסר מהשלם את מה שכבר ניצלו!',
+                explanation: 'נחלק 20 קורות ל-5 קבוצות שוות (חמישיות): בכל קבוצה יש 4 קורות (20÷5=4). הגג לוקח 2 קבוצות (8 קורות), ולכן לגשר נשארו 3 קבוצות: 3×4 = 12 קורות!',
+                mathStep: '20 ÷ 5 = 4  ➔  3 × 4 = 12',
+                svgType: 'beams_groups',
+                svgParams: {}
+            },
+            {
+                id: 'q_r3',
+                world: 'red',
+                topic: 'צורה מורכבת (היקף ושטח)',
+                ruleId: 'rule_rect',
+                points: 30,
+                question: 'חיברנו שני ריבועים זהים שאורך הצלע של כל אחד מהם הוא 4 ס״מ, כך שנוצר מלבן אחד ארוך (ראו שרטוט). מהו השטח של המלבן החדש?',
+                options: [
+                    '32 סמ״ר',
+                    '16 סמ״ר',
+                    '24 סמ״ר',
+                    '64 סמ״ר'
+                ],
+                correctIndex: 0,
+                rhyme: 'שני ריבועים שהתחברו יד ביד,\nהופכים למלבן אחד מיוחד!\nהשטח הוא חיבור של שני החלקים,\nאו אורך חדש כפול רוחב בפנים!',
+                explanation: 'שטח של ריבוע אחד הוא 4×4 = 16 סמ״ר. מכיוון שחיברנו שני ריבועים כאלה, השטח הכולל הוא 16 + 16 = 32 סמ״ר (או מלבן של 8 כפול 4 = 32).',
+                mathStep: '(4 × 4) × 2 = 16 × 2 = 32',
+                svgType: 'joined_squares',
+                svgParams: { side: 4 }
+            }
+        ];
+
+        /* ----------------------------------------------------
+           4. GAME STATE & PERSISTENCE
+           ---------------------------------------------------- */
+        let playerState = {
+            score: 0,
+            streak: 0,
+            solvedQuestionIds: [],
+            unlockedRuleIds: ['rule_rect', 'rule_frac_expand'] // Start with 2 starter cards unlocked
+        };
+
+        let currentSession = {
+            world: 'all',
+            queue: [],
+            currentIndex: 0,
+            hintRhymeUsed: false,
+            hint5050Used: false,
+            answeredCurrent: false
+        };
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('architects_math_v1');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    playerState = { ...playerState, ...parsed };
+                }
+                const savedCustom = localStorage.getItem('architects_custom_q_v1');
+                if (savedCustom) {
+                    const customList = JSON.parse(savedCustom);
+                    customList.forEach(cq => {
+                        if (!QUESTIONS.some(q => q.id === cq.id)) {
+                            QUESTIONS.push(cq);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.warn('Could not load saved state', e);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('architects_math_v1', JSON.stringify(playerState));
+            } catch (e) {}
+        }
+
+        /* ----------------------------------------------------
+           5. DYNAMIC SVG GENERATOR ("שיר, צורה וצבע")
+           ---------------------------------------------------- */
+        function generateVisualSVG(type, params = {}) {
+            switch (type) {
+                case 'rect_area_perim': {
+                    const w = params.w || 8;
+                    const h = params.h || 5;
+                    let gridLines = '';
+                    const rectW = 192;
+                    const rectH = 120;
+                    const startX = 64;
+                    const startY = 35;
+                    for (let i = 1; i < w; i++) {
+                        const x = startX + (rectW / w) * i;
+                        gridLines += `<line x1="${x}" y1="${startY}" x2="${x}" y2="${startY + rectH}" stroke="#10b981" stroke-width="1.5" stroke-opacity="0.45"/>`;
+                    }
+                    for (let j = 1; j < h; j++) {
+                        const y = startY + (rectH / h) * j;
+                        gridLines += `<line x1="${startX}" y1="${y}" x2="${startX + rectW}" y2="${y}" stroke="#10b981" stroke-width="1.5" stroke-opacity="0.45"/>`;
+                    }
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <!-- Inner Grass Area -->
+                        <rect x="${startX}" y="${startY}" width="${rectW}" height="${rectH}" fill="#065f46" rx="6" />
+                        ${gridLines}
+                        <!-- Outer Brown Fence (Perimeter) -->
+                        <rect x="${startX}" y="${startY}" width="${rectW}" height="${rectH}" fill="none" stroke="#f59e0b" stroke-width="6" rx="6" stroke-dasharray="10,4" />
+                        <!-- Labels -->
+                        <text x="160" y="24" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="15">אורך = ${w} מ׳ (גדר 🟫)</text>
+                        <text x="290" y="100" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="14">${h} מ׳</text>
+                        <rect x="105" y="80" width="110" height="30" rx="8" fill="#022c22" stroke="#34d399" stroke-width="1.5"/>
+                        <text x="160" y="100" text-anchor="middle" fill="#6ee7b7" font-weight="900" font-size="13">שטח דשא 🟩 בפנים</text>
+                        <text x="160" y="182" text-anchor="middle" fill="#cbd5e1" font-size="12">מסביב = היקף (גדר) | בפנים = שטח (משבצות)</text>
+                    </svg>`;
+                }
+
+                case 'triangle_angles': {
+                    const a1 = params.a1 || '65°';
+                    const a2 = params.a2 || '45°';
+                    const a3 = params.a3 || '?';
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <!-- Angle Arcs -->
+                        <polygon points="160,28 55,162 265,162" fill="#1e293b" stroke="#38bdf8" stroke-width="4" stroke-linejoin="round"/>
+                        <!-- Colored Corner Highlights -->
+                        <circle cx="160" cy="48" r="16" fill="#f43f5e" fill-opacity="0.35" stroke="#f43f5e" stroke-width="2"/>
+                        <circle cx="80" cy="150" r="16" fill="#eab308" fill-opacity="0.35" stroke="#eab308" stroke-width="2"/>
+                        <circle cx="240" cy="150" r="16" fill="#10b981" fill-opacity="0.35" stroke="#10b981" stroke-width="2"/>
+                        <!-- Labels -->
+                        <text x="160" y="78" text-anchor="middle" fill="#fda4af" font-weight="900" font-size="16">${a3}</text>
+                        <text x="98" y="142" text-anchor="middle" fill="#fde047" font-weight="900" font-size="14">${a1}</text>
+                        <text x="220" y="142" text-anchor="middle" fill="#6ee7b7" font-weight="900" font-size="14">${a2}</text>
+                        <text x="160" y="188" text-anchor="middle" fill="#38bdf8" font-weight="800" font-size="13">סכום 3 הזוויות יחד = תמיד 180°!</text>
+                    </svg>`;
+                }
+
+                case 'right_triangle_area': {
+                    const b = params.b || 6;
+                    const h = params.h || 4;
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <!-- Ghost Bounding Rectangle -->
+                        <rect x="70" y="35" width="180" height="120" fill="#0f172a" stroke="#64748b" stroke-width="2" stroke-dasharray="6,6"/>
+                        <!-- Right Triangle (Half of Rectangle) -->
+                        <polygon points="70,35 70,155 250,155" fill="#10b981" fill-opacity="0.45" stroke="#34d399" stroke-width="4"/>
+                        <!-- Right Angle Square -->
+                        <rect x="70" y="137" width="18" height="18" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
+                        <text x="160" y="178" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="14">ניצב תחתון = ${b} מ׳</text>
+                        <text x="42" y="100" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="14">${h} מ׳</text>
+                        <text x="195" y="75" text-anchor="middle" fill="#94a3b8" font-weight="700" font-size="12">חצי מלבן חסר</text>
+                    </svg>`;
+                }
+
+                case 'fraction_pizzas': {
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <!-- Left Circle (3/4) -->
+                        <g transform="translate(90, 92)">
+                            <circle r="55" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+                            <!-- 3 colored quarters -->
+                            <path d="M0,0 L0,-55 A55,55 0 0,1 55,0 Z" fill="#0284c7"/>
+                            <path d="M0,0 L55,0 A55,55 0 0,1 0,55 Z" fill="#0284c7"/>
+                            <path d="M0,0 L0,55 A55,55 0 0,1 -55,0 Z" fill="#0284c7"/>
+                            <line x1="-55" y1="0" x2="55" y2="0" stroke="#e0f2fe" stroke-width="2"/>
+                            <line x1="0" y1="-55" x2="0" y2="55" stroke="#e0f2fe" stroke-width="2"/>
+                            <text x="0" y="76" text-anchor="middle" fill="#7dd3fc" font-weight="900" font-size="15">3/4 צבוע</text>
+                        </g>
+                        <text x="160" y="98" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="24">=</text>
+                        <!-- Right Circle (9/12) -->
+                        <g transform="translate(230, 92)">
+                            <circle r="55" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+                            <path d="M0,0 L0,-55 A55,55 0 1,1 -55,0 Z" fill="#0ea5e9"/>
+                            <!-- 12 slices lines -->
+                            <line x1="-55" y1="0" x2="55" y2="0" stroke="#e0f2fe" stroke-width="1.5"/>
+                            <line x1="0" y1="-55" x2="0" y2="55" stroke="#e0f2fe" stroke-width="1.5"/>
+                            <line x1="-47" y1="-27" x2="47" y2="27" stroke="#e0f2fe" stroke-width="1"/>
+                            <line x1="-27" y1="-47" x2="27" y2="47" stroke="#e0f2fe" stroke-width="1"/>
+                            <line x1="-47" y1="27" x2="47" y2="-27" stroke="#e0f2fe" stroke-width="1"/>
+                            <line x1="-27" y1="47" x2="27" y2="-47" stroke="#e0f2fe" stroke-width="1"/>
+                            <text x="0" y="76" text-anchor="middle" fill="#fde047" font-weight="900" font-size="15">? / 12 חלקים</text>
+                        </g>
+                    </svg>`;
+                }
+
+                case 'fraction_bars_add': {
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <text x="160" y="28" text-anchor="middle" fill="#bae6fd" font-weight="900" font-size="14">חומה מחולקת ל-4 רבעים שווים:</text>
+                        <!-- Bar 1: 1/2 = 2/4 -->
+                        <rect x="40" y="45" width="120" height="40" fill="#0284c7" stroke="#e0f2fe" stroke-width="2"/>
+                        <rect x="160" y="45" width="60" height="40" fill="#38bdf8" stroke="#e0f2fe" stroke-width="2"/>
+                        <rect x="220" y="45" width="60" height="40" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+                        <!-- Divider inside the 1/2 showing it's 2/4 -->
+                        <line x1="100" y1="45" x2="100" y2="85" stroke="#bae6fd" stroke-width="2" stroke-dasharray="4,4"/>
+                        <!-- Labels -->
+                        <text x="100" y="108" text-anchor="middle" fill="#38bdf8" font-weight="900" font-size="13">בבוקר: 1/2 (= 2/4)</text>
+                        <text x="190" y="108" text-anchor="middle" fill="#7dd3fc" font-weight="900" font-size="13">+ 1/4</text>
+                        <text x="160" y="155" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="15">כמה רבעים צבועים יחד מתוך 4?</text>
+                    </svg>`;
+                }
+
+                case 'decimal_bar': {
+                    let rects = '';
+                    for (let i = 0; i < 10; i++) {
+                        const x = 30 + i * 26;
+                        const colored = i < 4;
+                        rects += `<rect x="${x}" y="65" width="26" height="48" fill="${colored ? '#0ea5e9' : '#1e293b'}" stroke="#94a3b8" stroke-width="1.5"/>`;
+                    }
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <text x="160" y="38" text-anchor="middle" fill="#fde047" font-weight="900" font-size="15">0.4 = 4 עשיריות מתוך 10:</text>
+                        ${rects}
+                        <!-- Group brackets into fifths -->
+                        <rect x="30" y="65" width="52" height="48" fill="none" stroke="#fbbf24" stroke-width="3"/>
+                        <rect x="82" y="65" width="52" height="48" fill="none" stroke="#fbbf24" stroke-width="3"/>
+                        <text x="160" y="150" text-anchor="middle" fill="#bae6fd" font-weight="700" font-size="13">כל 2 עשיריות (מסגרת זהב) = חמישית אחת (1/5)!</text>
+                    </svg>`;
+                }
+
+                case 'order_podium': {
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <!-- Step 1: Brackets -->
+                        <rect x="115" y="25" width="90" height="45" rx="10" fill="#eab308" stroke="#fef08a" stroke-width="2"/>
+                        <text x="160" y="45" text-anchor="middle" fill="#0f172a" font-weight="900" font-size="12">1. מלך הסוגריים</text>
+                        <text x="160" y="62" text-anchor="middle" fill="#0f172a" font-weight="900" font-size="15">( 2 + 3 )</text>
+                        <!-- Step 2: Multiply/Divide -->
+                        <rect x="35" y="85" width="115" height="45" rx="10" fill="#0284c7" stroke="#bae6fd" stroke-width="2"/>
+                        <text x="92" y="105" text-anchor="middle" fill="#ffffff" font-weight="900" font-size="12">2. כפל וחילוק</text>
+                        <text x="92" y="122" text-anchor="middle" fill="#e0f2fe" font-weight="900" font-size="15">×  או  ÷</text>
+                        <!-- Step 3: Add/Sub -->
+                        <rect x="170" y="85" width="115" height="45" rx="10" fill="#475569" stroke="#cbd5e1" stroke-width="2"/>
+                        <text x="227" y="105" text-anchor="middle" fill="#ffffff" font-weight="900" font-size="12">3. חיבור וחיסור</text>
+                        <text x="227" y="122" text-anchor="middle" fill="#f1f5f9" font-weight="900" font-size="15">+  או  -</text>
+                        <!-- Expression Banner -->
+                        <rect x="50" y="145" width="220" height="36" rx="8" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="160" y="169" text-anchor="middle" fill="#fde047" font-weight="900" font-size="17" direction="ltr">20 - 3 × (2 + 3) = ?</text>
+                    </svg>`;
+                }
+
+                case 'digits_sum': {
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <text x="160" y="35" text-anchor="middle" fill="#fde047" font-weight="900" font-size="14">סוד ההתחלקות ב-3: מחברים את הספרות!</text>
+                        <circle cx="80" cy="95" r="28" fill="#d97706" stroke="#fef08a" stroke-width="3"/>
+                        <text x="80" y="103" text-anchor="middle" fill="#fff" font-weight="900" font-size="22">1</text>
+                        <text x="120" y="102" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="22">+</text>
+                        <circle cx="160" cy="95" r="28" fill="#0284c7" stroke="#bae6fd" stroke-width="3"/>
+                        <text x="160" y="103" text-anchor="middle" fill="#fff" font-weight="900" font-size="22">3</text>
+                        <text x="200" y="102" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="22">+</text>
+                        <circle cx="240" cy="95" r="28" fill="#059669" stroke="#a7f3d0" stroke-width="3"/>
+                        <text x="240" y="103" text-anchor="middle" fill="#fff" font-weight="900" font-size="22">5</text>
+                        <text x="160" y="162" text-anchor="middle" fill="#6ee7b7" font-weight="900" font-size="15">סכום הספרות מתחלק ב-3? אז המספר מתחלק!</text>
+                    </svg>`;
+                }
+
+                case 'prime_blocks': {
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <text x="90" y="35" text-anchor="middle" fill="#fca5a5" font-weight="900" font-size="13">מספר פריק (למשל 15 = 3×5)</text>
+                        <!-- 3x5 Grid -->
+                        <g transform="translate(35, 48)">
+                            <rect width="110" height="66" fill="#be123c" stroke="#fda4af" stroke-width="2" rx="4"/>
+                            <line x1="0" y1="22" x2="110" y2="22" stroke="#fda4af"/>
+                            <line x1="0" y1="44" x2="110" y2="44" stroke="#fda4af"/>
+                            <line x1="22" y1="0" x2="22" y2="66" stroke="#fda4af"/>
+                            <line x1="44" y1="0" x2="44" y2="66" stroke="#fda4af"/>
+                            <line x1="66" y1="0" x2="66" y2="66" stroke="#fda4af"/>
+                            <line x1="88" y1="0" x2="88" y2="66" stroke="#fda4af"/>
+                        </g>
+                        <text x="235" y="35" text-anchor="middle" fill="#6ee7b7" font-weight="900" font-size="13">מספר ראשוני (רק שורה אחת!)</text>
+                        <rect x="175" y="72" width="120" height="22" fill="#059669" stroke="#a7f3d0" stroke-width="2" rx="4"/>
+                        <text x="235" y="155" text-anchor="middle" fill="#fde047" font-weight="800" font-size="13">איזה מספר מתחלק רק ב-1 ובעצמו?</text>
+                    </svg>`;
+                }
+
+                case 'missing_side_rect': {
+                    const perim = params.perim || 24;
+                    const known = params.known || 8;
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <rect x="65" y="42" width="190" height="110" fill="#31102f" stroke="#f43f5e" stroke-width="5" rx="8"/>
+                        <text x="160" y="30" text-anchor="middle" fill="#6ee7b7" font-weight="900" font-size="15">אורך ידוע = ${known} מ׳</text>
+                        <text x="160" y="175" text-anchor="middle" fill="#6ee7b7" font-weight="900" font-size="15">אורך ידוע = ${known} מ׳</text>
+                        <text x="35" y="102" text-anchor="middle" fill="#fde047" font-weight="900" font-size="20">? מ׳</text>
+                        <text x="285" y="102" text-anchor="middle" fill="#fde047" font-weight="900" font-size="20">? מ׳</text>
+                        <text x="160" y="102" text-anchor="middle" fill="#fda4af" font-weight="900" font-size="15">היקף כל הגדר = ${perim} מ׳</text>
+                    </svg>`;
+                }
+
+                case 'beams_groups': {
+                    let boxes = '';
+                    for (let i = 0; i < 5; i++) {
+                        const x = 25 + i * 55;
+                        const isRoof = i < 2;
+                        boxes += `
+                        <g transform="translate(${x}, 55)">
+                            <rect width="46" height="70" rx="8" fill="${isRoof ? '#e11d48' : '#059669'}" stroke="#fff" stroke-width="2"/>
+                            <text x="23" y="32" text-anchor="middle" fill="#fff" font-weight="900" font-size="12">1/5</text>
+                            <text x="23" y="54" text-anchor="middle" fill="#fef08a" font-weight="900" font-size="11">${isRoof ? 'לגג' : 'לגשר?'}</text>
+                        </g>`;
+                    }
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <text x="160" y="32" text-anchor="middle" fill="#fde047" font-weight="900" font-size="14">20 קורות מחולקות ל-5 חמישיות שוות:</text>
+                        ${boxes}
+                        <text x="160" y="162" text-anchor="middle" fill="#a7f3d0" font-weight="900" font-size="13">2/5 (אדום) לגג | 3/5 (ירוק) נשארו לגשר!</text>
+                    </svg>`;
+                }
+
+                case 'joined_squares': {
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <rect x="60" y="50" width="100" height="100" fill="#0284c7" fill-opacity="0.45" stroke="#38bdf8" stroke-width="4"/>
+                        <rect x="160" y="50" width="100" height="100" fill="#10b981" fill-opacity="0.45" stroke="#34d399" stroke-width="4"/>
+                        <text x="110" y="40" text-anchor="middle" fill="#7dd3fc" font-weight="900" font-size="14">4 ס״מ</text>
+                        <text x="210" y="40" text-anchor="middle" fill="#6ee7b7" font-weight="900" font-size="14">4 ס״מ</text>
+                        <text x="35" y="105" text-anchor="middle" fill="#fbbf24" font-weight="900" font-size="14">4 ס״מ</text>
+                        <text x="110" y="105" text-anchor="middle" fill="#fff" font-weight="900" font-size="13">ריבוע 1</text>
+                        <text x="210" y="105" text-anchor="middle" fill="#fff" font-weight="900" font-size="13">ריבוע 2</text>
+                        <text x="160" y="178" text-anchor="middle" fill="#fde047" font-weight="900" font-size="14">אורך המלבן החדש = 4 + 4 = 8 ס״מ</text>
+                    </svg>`;
+                }
+
+                default: {
+                    return `
+                    <svg viewBox="0 0 320 200" class="w-full h-full">
+                        <rect x="40" y="35" width="240" height="130" rx="18" fill="#1e1b4b" stroke="#fbbf24" stroke-width="4"/>
+                        <text x="160" y="95" text-anchor="middle" fill="#fde047" font-weight="900" font-size="22">🏛️ אתגר אדריכלים מיוחד!</text>
+                        <text x="160" y="128" text-anchor="middle" fill="#cbd5e1" font-weight="700" font-size="13">קראו היטב והיעזרו ברמז השיר</text>
+                    </svg>`;
+                }
+            }
+        }
+
+        /* ----------------------------------------------------
+           6. CITADEL BUILDER SVG (Progress Visualization)
+           ---------------------------------------------------- */
+        function getWorldSolvedCount(worldColor) {
+            return QUESTIONS.filter(q => q.world === worldColor && playerState.solvedQuestionIds.includes(q.id)).length;
+        }
+
+        function getWorldTotalCount(worldColor) {
+            return QUESTIONS.filter(q => q.world === worldColor).length;
+        }
+
+        function renderCitadelSVG() {
+            const gCount = getWorldSolvedCount('green');
+            const bCount = getWorldSolvedCount('blue');
+            const yCount = getWorldSolvedCount('yellow');
+            const rCount = getWorldSolvedCount('red');
+
+            const gLit = gCount > 0;
+            const bLit = bCount > 0;
+            const yLit = yCount > 0;
+            const rLit = rCount > 0;
+
+            const svg = `
+            <svg viewBox="0 0 500 210" class="w-full h-full">
+                <!-- Stars in Night Sky -->
+                <circle cx="50" cy="30" r="2" fill="#fde047" opacity="0.8"/>
+                <circle cx="140" cy="20" r="2.5" fill="#fde047" opacity="0.6"/>
+                <circle cx="380" cy="25" r="2" fill="#fde047" opacity="0.9"/>
+                <circle cx="450" cy="45" r="1.5" fill="#fff" opacity="0.7"/>
+
+                <!-- Ground Hills -->
+                <path d="M0,175 Q125,155 250,175 T500,170 L500,210 L0,210 Z" fill="#064e3b"/>
+
+                <!-- 1. GREEN STRUCTURE: Geometry Gardens & Pyramid (Left) -->
+                <g opacity="${gLit ? '1' : '0.35'}" class="transition-all duration-500">
+                    <polygon points="35,175 85,95 135,175" fill="${gLit ? '#10b981' : '#334155'}" stroke="${gLit ? '#a7f3d0' : '#64748b'}" stroke-width="3"/>
+                    <circle cx="85" cy="80" r="10" fill="${gLit ? '#fde047' : '#475569'}"/>
+                    <text x="85" y="196" text-anchor="middle" fill="#6ee7b7" font-weight="900" font-size="11">פירמידת הצורות (${gCount})</text>
+                </g>
+
+                <!-- 2. BLUE STRUCTURE: Fractions Tower (Center-Left) -->
+                <g opacity="${bLit ? '1' : '0.35'}" class="transition-all duration-500">
+                    <rect x="165" y="65" width="60" height="110" rx="6" fill="${bLit ? '#0284c7' : '#334155'}" stroke="${bLit ? '#7dd3fc' : '#64748b'}" stroke-width="3"/>
+                    <polygon points="160,65 195,30 230,65" fill="${bLit ? '#38bdf8' : '#475569'}"/>
+                    <circle cx="195" cy="95" r="14" fill="#0f172a" stroke="#bae6fd" stroke-width="2"/>
+                    <line x1="181" y1="95" x2="209" y2="95" stroke="#bae6fd" stroke-width="1.5"/>
+                    <line x1="195" y1="81" x2="195" y2="109" stroke="#bae6fd" stroke-width="1.5"/>
+                    <text x="195" y="196" text-anchor="middle" fill="#7dd3fc" font-weight="900" font-size="11">מגדל השברים (${bCount})</text>
+                </g>
+
+                <!-- 3. YELLOW STRUCTURE: Temple of Numbers (Center-Right) -->
+                <g opacity="${yLit ? '1' : '0.35'}" class="transition-all duration-500">
+                    <rect x="265" y="100" width="90" height="75" fill="${yLit ? '#d97706' : '#334155'}" stroke="${yLit ? '#fde047' : '#64748b'}" stroke-width="3"/>
+                    <polygon points="258,100 310,60 362,100" fill="${yLit ? '#fbbf24' : '#475569'}"/>
+                    <rect x="280" y="115" width="12" height="60" fill="#fef08a" opacity="0.6"/>
+                    <rect x="304" y="115" width="12" height="60" fill="#fef08a" opacity="0.6"/>
+                    <rect x="328" y="115" width="12" height="60" fill="#fef08a" opacity="0.6"/>
+                    <text x="310" y="196" text-anchor="middle" fill="#fde047" font-weight="900" font-size="11">מקדש המספרים (${yCount})</text>
+                </g>
+
+                <!-- 4. RED STRUCTURE: Grand Challenge Bridge & Citadel (Right) -->
+                <g opacity="${rLit ? '1' : '0.35'}" class="transition-all duration-500">
+                    <path d="M385,175 L385,95 L410,75 L435,95 L465,95 L465,175 Z" fill="${rLit ? '#e11d48' : '#334155'}" stroke="${rLit ? '#fda4af' : '#64748b'}" stroke-width="3"/>
+                    <circle cx="425" cy="135" r="16" fill="#0f172a"/>
+                    <text x="425" y="196" text-anchor="middle" fill="#fda4af" font-weight="900" font-size="11">מבצר האתגר (${rCount})</text>
+                </g>
+            </svg>`;
+
+            document.getElementById('citadel-svg-container').innerHTML = svg;
+        }
+
+        /* ----------------------------------------------------
+           7. HUD & DASHBOARD UPDATER
+           ---------------------------------------------------- */
+        function updateHUDAndDashboard() {
+            // Score & Streak
+            document.getElementById('hud-score').textContent = playerState.score;
+            document.getElementById('hud-streak').textContent = playerState.streak;
+            document.getElementById('hud-cards-count').textContent = `${playerState.unlockedRuleIds.length}/${GOLDEN_RULES.length}`;
+
+            // Rank Calculation
+            const s = playerState.score;
+            let rankName = 'שוליה 🛠️';
+            let nextRank = 'בנאי מוסמך 🧱';
+            let nextTarget = 60;
+            let pct = Math.min(100, Math.round((s / 60) * 100));
+
+            if (s >= 200) {
+                rankName = 'אדריכל ראשי 👑';
+                nextRank = 'הגעתם לדרגה הגבוהה ביותר במסדר!';
+                nextTarget = s;
+                pct = 100;
+            } else if (s >= 120) {
+                rankName = 'מהנדס מלכותי 📐';
+                nextRank = 'הדרך לדרגת: אדריכל ראשי 👑';
+                nextTarget = 200;
+                pct = Math.round(((s - 120) / 80) * 100);
+            } else if (s >= 60) {
+                rankName = 'בנאי מוסמך 🧱';
+                nextRank = 'הדרך לדרגת: מהנדס מלכותי 📐';
+                nextTarget = 120;
+                pct = Math.round(((s - 60) / 60) * 100);
+            }
+
+            document.getElementById('rank-badge').textContent = `דרגה: ${rankName}`;
+            document.getElementById('next-rank-label').textContent = nextRank;
+            document.getElementById('rank-points-progress').textContent = `${s} / ${nextTarget} נק'`;
+            document.getElementById('rank-progress-bar').style.width = `${Math.max(6, pct)}%`;
+
+            // World Counters
+            ['green', 'blue', 'yellow', 'red'].forEach(w => {
+                const solved = getWorldSolvedCount(w);
+                const total = getWorldTotalCount(w);
+                document.getElementById(`prog-${w}`).textContent = `${solved}/${total}`;
+                document.getElementById(`world-stat-${w}`).textContent = `${solved}/${total} משימות הושלמו`;
+            });
+
+            renderCitadelSVG();
+        }
+
+        /* ----------------------------------------------------
+           8. GAMEPLAY ENGINE: START WORLD, RENDER QUESTION, CHECK ANSWER
+           ---------------------------------------------------- */
+        const WORLD_META = {
+            green: { name: '🟩 עולם ירוק: גאומטריה והיקפים', pillClass: 'bg-emerald-900 text-emerald-200 border border-emerald-400', borderClass: 'border-emerald-500/70' },
+            blue: { name: '🟦 עולם כחול: שברים פשוטים ועשרוניים', pillClass: 'bg-sky-900 text-sky-200 border border-sky-400', borderClass: 'border-sky-500/70' },
+            yellow: { name: '🟨 עולם צהוב: סדר פעולות וחקר מספרים', pillClass: 'bg-amber-900 text-amber-200 border border-amber-400', borderClass: 'border-amber-500/70' },
+            red: { name: '🟥 עולם אדום: אתגרי אדריכל וחשיבה', pillClass: 'bg-rose-900 text-rose-200 border border-rose-400', borderClass: 'border-rose-500/70' }
+        };
+
+        function showDashboard() {
+            document.getElementById('view-game').classList.add('hidden');
+            document.getElementById('view-dashboard').classList.remove('hidden');
+            updateHUDAndDashboard();
+        }
+
+        function startWorld(worldKey) {
+            currentSession.world = worldKey;
+            let pool = worldKey === 'all' ? [...QUESTIONS] : QUESTIONS.filter(q => q.world === worldKey);
+            
+            // Prioritize unsolved questions first so kids progress smoothly
+            pool.sort((a, b) => {
+                const aSolved = playerState.solvedQuestionIds.includes(a.id) ? 1 : 0;
+                const bSolved = playerState.solvedQuestionIds.includes(b.id) ? 1 : 0;
+                return aSolved - bSolved;
+            });
+
+            currentSession.queue = pool;
+            currentSession.currentIndex = 0;
+
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-game').classList.remove('hidden');
+
+            loadCurrentQuestion();
+        }
+
+        function loadCurrentQuestion() {
+            const q = currentSession.queue[currentSession.currentIndex];
+            if (!q) {
+                showDashboard();
+                return;
+            }
+
+            currentSession.answeredCurrent = false;
+            currentSession.hintRhymeUsed = false;
+            currentSession.hint5050Used = false;
+
+            // Meta & World Styling
+            const meta = WORLD_META[q.world] || WORLD_META.green;
+            const pill = document.getElementById('q-world-pill');
+            pill.className = `text-xs sm:text-sm font-black px-3 py-1 rounded-full ${meta.pillClass}`;
+            pill.textContent = meta.name;
+
+            const qCard = document.getElementById('question-card-border');
+            qCard.className = `bg-slate-900/95 border-2 ${meta.borderClass} rounded-3xl p-5 sm:p-6 shadow-2xl`;
+
+            document.getElementById('q-stars').textContent = `⭐⭐ ${q.points} נק'`;
+            document.getElementById('q-counter').textContent = `שאלה ${currentSession.currentIndex + 1} מתוך ${currentSession.queue.length}`;
+            document.getElementById('q-topic-tag').textContent = q.topic;
+            document.getElementById('q-title').textContent = q.question;
+
+            // Render Dynamic SVG
+            document.getElementById('question-svg-box').innerHTML = generateVisualSVG(q.svgType, q.svgParams);
+
+            // Reset Hints & Feedback
+            document.getElementById('pre-hint-box').classList.add('hidden');
+            document.getElementById('btn-hint-rhyme').disabled = false;
+            document.getElementById('btn-hint-5050').disabled = false;
+            document.getElementById('feedback-panel').classList.add('hidden');
+
+            // Create shuffled options with original indices tracked
+            const indexedOptions = q.options.map((text, idx) => ({ text, isCorrect: idx === q.correctIndex, origIdx: idx }));
+            // Shuffle
+            for (let i = indexedOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indexedOptions[i], indexedOptions[j]] = [indexedOptions[j], indexedOptions[i]];
+            }
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            const letters = ['א', 'ב', 'ג', 'ד'];
+
+            indexedOptions.forEach((opt, displayIdx) => {
+                const btn = document.createElement('button');
+                btn.dataset.correct = opt.isCorrect ? 'true' : 'false';
+                btn.className = 'option-btn game-btn w-full text-right bg-slate-800 hover:bg-slate-700/90 border-2 border-slate-600 hover:border-amber-400 text-white font-bold p-4 rounded-2xl flex items-center gap-3 transition';
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-600 flex items-center justify-center text-sm font-black text-amber-400 shrink-0">${letters[displayIdx]}</span>
+                    <span class="text-sm sm:text-base leading-snug">${opt.text}</span>
+                `;
+                btn.onclick = () => handleAnswerSelection(btn, opt.isCorrect, q);
+                grid.appendChild(btn);
+            });
+        }
+
+        function useRhymeHint() {
+            const q = currentSession.queue[currentSession.currentIndex];
+            if (!q || currentSession.answeredCurrent) return;
+            playSound('hint');
+            currentSession.hintRhymeUsed = true;
+            document.getElementById('btn-hint-rhyme').disabled = true;
+            const box = document.getElementById('pre-hint-box');
+            document.getElementById('pre-hint-text').textContent = q.rhyme;
+            box.classList.remove('hidden');
+        }
+
+        function use5050Hint() {
+            if (currentSession.answeredCurrent || currentSession.hint5050Used) return;
+            playSound('hint');
+            currentSession.hint5050Used = true;
+            document.getElementById('btn-hint-5050').disabled = true;
+
+            const wrongBtns = Array.from(document.querySelectorAll('.option-btn')).filter(b => b.dataset.correct === 'false');
+            wrongBtns.slice(0, 2).forEach(b => {
+                b.disabled = true;
+                b.classList.add('opacity-25', 'line-through');
+            });
+        }
+
+        function handleAnswerSelection(selectedBtn, isCorrect, q) {
+            if (currentSession.answeredCurrent) return;
+            currentSession.answeredCurrent = true;
+
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => {
+                b.disabled = true;
+                if (b.dataset.correct === 'true') {
+                    b.classList.remove('bg-slate-800', 'border-slate-600');
+                    b.classList.add('bg-emerald-700/90', 'border-emerald-300', 'ring-2', 'ring-emerald-300');
+                }
+            });
+
+            const fbPanel = document.getElementById('feedback-panel');
+            const fbIcon = document.getElementById('fb-icon');
+            const fbTitle = document.getElementById('fb-title');
+            const fbSub = document.getElementById('fb-subtitle');
+            const btnRetry = document.getElementById('btn-try-again');
+
+            // Populate Rhyme & Visual Explanation regardless of right or wrong!
+            document.getElementById('fb-rhyme').textContent = q.rhyme;
+            document.getElementById('fb-explanation').textContent = q.explanation;
+            document.getElementById('fb-math-step').textContent = q.mathStep || '';
+
+            // Unlock Golden Rule Card in Album
+            if (q.ruleId && !playerState.unlockedRuleIds.includes(q.ruleId)) {
+                playerState.unlockedRuleIds.push(q.ruleId);
+                showToast('נפתח קלף חדש ב"ספר השירים והצורות"! 📖', '🎉');
+            }
+
+            if (isCorrect) {
+                playSound('correct');
+                fireConfetti();
+                playerState.streak += 1;
+                const bonus = playerState.streak >= 3 ? 10 : 0;
+                const earned = q.points + bonus;
+                playerState.score += earned;
+
+                if (!playerState.solvedQuestionIds.includes(q.id)) {
+                    playerState.solvedQuestionIds.push(q.id);
+                }
+
+                fbPanel.className = 'rounded-3xl p-5 sm:p-6 border-2 bg-emerald-950/90 border-emerald-400 shadow-2xl animate-pop space-y-4';
+                fbIcon.textContent = '🏆';
+                fbTitle.textContent = 'תשובה מדויקת! עבודה של אדריכל אמיתי!';
+                fbSub.textContent = `הרווחת +${earned} נקודות בנייה ${bonus ? '(כולל בונוס רצף 🔥!)' : ''} וקראת את שיר הכלל לחזרה.`;
+                btnRetry.classList.add('hidden');
+            } else {
+                playSound('wrong');
+                playerState.streak = 0;
+                selectedBtn.classList.remove('bg-slate-800', 'border-slate-600');
+                selectedBtn.classList.add('bg-rose-800/90', 'border-rose-400');
+
+                fbPanel.className = 'rounded-3xl p-5 sm:p-6 border-2 bg-rose-950/90 border-amber-400 shadow-2xl animate-pop space-y-4';
+                fbIcon.textContent = '💡';
+                fbTitle.textContent = 'טעית? למדת! בואו נבין יחד בעזרת השיר והצבעים:';
+                fbSub.textContent = 'קראו את שיר הכלל ואת ההסבר הפשוט למטה, ואז תוכלו לנסות שוב או להמשיך!';
+                btnRetry.classList.remove('hidden');
+            }
+
+            saveState();
+            updateHUDAndDashboard();
+            fbPanel.classList.remove('hidden');
+            fbPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function retryCurrentQuestion() {
+            loadCurrentQuestion();
+        }
+
+        function nextQuestion() {
+            currentSession.currentIndex++;
+            if (currentSession.currentIndex >= currentSession.queue.length) {
+                showToast('סיימתם את סבב המשימות בעולם זה! כל הכבוד! 🏛️', '🎉');
+                showDashboard();
+            } else {
+                loadCurrentQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        /* ----------------------------------------------------
+           9. GOLDEN RULES ALBUM MODAL (ספר השירים והצורות)
+           ---------------------------------------------------- */
+        function openAlbumModal() {
+            renderAlbumCards('all');
+            document.getElementById('modal-album').classList.remove('hidden');
+        }
+
+        function closeAlbumModal() {
+            document.getElementById('modal-album').classList.add('hidden');
+        }
+
+        function renderAlbumCards(filterWorld) {
+            const container = document.getElementById('album-cards-grid');
+            container.innerHTML = '';
+
+            const list = filterWorld === 'all' ? GOLDEN_RULES : GOLDEN_RULES.filter(r => r.world === filterWorld);
+
+            const borderColors = {
+                green: 'border-emerald-400/70 bg-emerald-950/30',
+                blue: 'border-sky-400/70 bg-sky-950/30',
+                yellow: 'border-amber-400/70 bg-amber-950/30',
+                red: 'border-rose-400/70 bg-rose-950/30'
+            };
+
+            list.forEach(rule => {
+                const isUnlocked = playerState.unlockedRuleIds.includes(rule.id);
+                const card = document.createElement('div');
+                card.className = `rounded-2xl border-2 p-4 flex flex-col justify-between gap-3 ${borderColors[rule.world] || 'border-slate-700'}`;
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <h3 class="text-base sm:text-lg font-black text-white">${rule.title}</h3>
+                            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${isUnlocked ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300'}">
+                                ${isUnlocked ? '⭐ קלף פתוח' : '🔒 ייפתח במשחק (זמין לקריאה)'}
+                            </span>
+                        </div>
+                        <div class="w-full h-40 bg-slate-950/90 rounded-xl border border-slate-800 p-2 mb-3">
+                            ${generateVisualSVG(rule.svgType, rule.svgParams)}
+                        </div>
+                        <div class="bg-slate-950/80 border border-amber-400/50 rounded-xl p-3 mb-2">
+                            <div class="text-xs font-bold text-amber-300 mb-1">🎵 שיר הכלל:</div>
+                            <p class="text-xs sm:text-sm font-bold text-amber-100 whitespace-pre-line leading-relaxed">${rule.rhyme}</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 bg-slate-900/90 p-2.5 rounded-xl border border-slate-700">
+                        <strong class="text-sky-300">💡 בקצרה:</strong> ${rule.tip}
+                    </p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* ----------------------------------------------------
+           10. TEACHER / PARENT CUSTOM QUESTION MODAL
+           ---------------------------------------------------- */
+        function openTeacherModal() {
+            document.getElementById('modal-teacher').classList.remove('hidden');
+        }
+
+        function closeTeacherModal() {
+            document.getElementById('modal-teacher').classList.add('hidden');
+        }
+
+        function saveCustomQuestion(e) {
+            e.preventDefault();
+            const world = document.getElementById('cq-world').value;
+            const topic = document.getElementById('cq-topic').value.trim();
+            const question = document.getElementById('cq-question').value.trim();
+            const ansCorrect = document.getElementById('cq-ans-correct').value.trim();
+            const w1 = document.getElementById('cq-ans-w1').value.trim();
+            const w2 = document.getElementById('cq-ans-w2').value.trim();
+            const w3 = document.getElementById('cq-ans-w3').value.trim();
+            const rhyme = document.getElementById('cq-rhyme').value.trim();
+            const explanation = document.getElementById('cq-explanation').value.trim();
+            const mathStep = document.getElementById('cq-math').value.trim();
+
+            const defaultSvgByWorld = {
+                green: 'rect_area_perim',
+                blue: 'fraction_pizzas',
+                yellow: 'order_podium',
+                red: 'missing_side_rect'
+            };
+
+            const newQ = {
+                id: 'custom_' + Date.now(),
+                world,
+                topic,
+                ruleId: 'rule_rect',
+                points: 25,
+                question,
+                options: [ansCorrect, w1, w2, w3],
+                correctIndex: 0,
+                rhyme,
+                explanation,
+                mathStep: mathStep || ansCorrect,
+                svgType: defaultSvgByWorld[world] || 'custom',
+                svgParams: {}
+            };
+
+            QUESTIONS.push(newQ);
+
+            try {
+                const existing = JSON.parse(localStorage.getItem('architects_custom_q_v1') || '[]');
+                existing.push(newQ);
+                localStorage.setItem('architects_custom_q_v1', JSON.stringify(existing));
+            } catch (err) {}
+
+            document.getElementById('custom-question-form').reset();
+            closeTeacherModal();
+            updateHUDAndDashboard();
+            showToast('השאלה החדשה נוספה בהצלחה למשחק! 🎉', '👩‍🏫');
+        }
+
+        function resetProgressPrompt() {
+            playerState = {
+                score: 0,
+                streak: 0,
+                solvedQuestionIds: [],
+                unlockedRuleIds: ['rule_rect', 'rule_frac_expand']
+            };
+            saveState();
+            updateHUDAndDashboard();
+            showToast('המשחק אופס! בהצלחה בבניית הקריה מחדש 🏰', '🔄');
+        }
+
+        /* ----------------------------------------------------
+           11. TOAST & CONFETTI CELEBRATION
+           ---------------------------------------------------- */
+        let toastTimer = null;
+        function showToast(text, icon = '✨') {
+            const toast = document.getElementById('toast-msg');
+            document.getElementById('toast-icon').textContent = icon;
+            document.getElementById('toast-text').textContent = text;
+            toast.classList.remove('hidden');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        function fireConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#10b981', '#38bdf8', '#fbbf24', '#f43f5e', '#a855f7'];
+            for (let i = 0; i < 65; i++) {
+                pieces.push({
+                    x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: -Math.random() * 14 - 4,
+                    size: Math.random() * 8 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rot: Math.random() * 360
+                });
+            }
+
+            let frame = 0;
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.45; // gravity
+                    p.rot += 6;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rot * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+                frame++;
+                if (frame < 75) {
+                    requestAnimationFrame(animateConfetti);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animateConfetti();
+        }
+
+        // Initialize on Window Load
+        window.onload = function () {
+            loadState();
+            updateHUDAndDashboard();
+        };
+    </script>
+</body>
+</html>
